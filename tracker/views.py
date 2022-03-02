@@ -9,7 +9,9 @@ class MeasurementListView(generic.ListView):
 
     def get_queryset(self):
         # TODO: logged in user ID should be retrieved here
-        measurements = Measurement.objects.filter(user=User.objects.get(pk=1))
+        measurements = Measurement.objects.filter(user=User.objects.get(pk=1)).order_by(
+            "-pub_date"
+        )
 
         for index, measurement in enumerate(measurements):
             if index != len(measurements) - 1:
