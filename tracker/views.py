@@ -1,5 +1,6 @@
 from django.views import generic
 from django.contrib.auth.models import User
+from django.shortcuts import render
 
 from .models import Measurement
 
@@ -32,3 +33,14 @@ class MeasurementListView(generic.ListView):
                         measurement.weight - measurements[index + 1].weight
                     )
         return measurements
+
+
+class MeasurementChartView(generic.ListView):
+    model = Measurement
+    template_name = "tracker/charts.html"
+
+    def get_queryset(self):
+        # TODO: logged in user ID should be retrieved here
+        return Measurement.objects.filter(user=User.objects.get(pk=1)).order_by(
+            "-pub_date"
+        )
