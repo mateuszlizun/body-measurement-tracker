@@ -1,0 +1,53 @@
+{% extends "tracker/base.html" %}
+{% load static %}
+{% block content %}
+    <div class="row justify-content-center m-0">
+        {% if measurement_list %}
+            <div class="col-sm-12 col-md-8">
+                <canvas id="chart"></canvas>
+            </div>
+        {% else %}
+            <p>No measurements are available!<p>
+        {% endif %}
+    <div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript">
+        const labels = [
+            {%for data in measurement_list %}
+                '{{data.pub_date|date:"d.m.y"}}',
+            {% endfor %}
+        ];
+        const datasets = [
+            {
+                label: 'Chest',
+                backgroundColor: 'rgb(181, 186, 114)',
+                borderColor: 'rgb(181, 186, 114)',
+                data: [
+                    {%for data in measurement_list %}
+                        '{{data.chest}}',
+                    {% endfor %}
+                ]
+            },
+            {
+                label: 'Waist',
+                backgroundColor: 'rgb(125, 111, 134)',
+                borderColor: 'rgb(125, 111, 134)',
+                data: [
+                    {%for data in measurement_list %}
+                        '{{data.waist}}',
+                    {% endfor %}
+                ]
+            },
+            {
+                label: 'Hips',
+                backgroundColor: 'rgb(79, 53, 155)',
+                borderColor: 'rgb(79, 53, 155)',
+                data: [
+                    {%for data in measurement_list %}
+                        '{{data.hips}}',
+                    {% endfor %}
+                ]
+            }];
+    </script>
+    <script src="{% static 'tracker/js/charts.js' %}"></script>
+{% endblock content%}

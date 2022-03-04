@@ -9,21 +9,20 @@ from django.urls import reverse
 from .models import Measurement
 
 
+def createMeasurement(pub_date=timezone.now(), chest=0, waist=0, hips=0, weight=0):
+    return Measurement.objects.create(
+        user=User.objects.get(username="user"),
+        pub_date=pub_date,
+        chest=chest,
+        waist=waist,
+        hips=hips,
+        weight=weight,
+    )
+
+
 class MeasurementListViewTests(TestCase):
     def setUp(self):
         User.objects.create(username="user", password="pass")
-
-    def createMeasurement(
-        self, pub_date=timezone.now(), chest=0, waist=0, hips=0, weight=0
-    ):
-        return Measurement.objects.create(
-            user=User.objects.get(username="user"),
-            pub_date=pub_date,
-            chest=chest,
-            waist=waist,
-            hips=hips,
-            weight=weight,
-        )
 
     def test_no_measurements(self):
         """
@@ -38,7 +37,7 @@ class MeasurementListViewTests(TestCase):
         """
         Single measurement is properly displayed on the page.
         """
-        measurement = self.createMeasurement()
+        measurement = createMeasurement()
 
         response = self.client.get(reverse("tracker:home"))
 
@@ -49,12 +48,8 @@ class MeasurementListViewTests(TestCase):
         """
         Two measurements are listed in the correct order by pub_date.
         """
-        measurement1 = self.createMeasurement(
-            timezone.now() - datetime.timedelta(days=3)
-        )
-        measurement2 = self.createMeasurement(
-            timezone.now() - datetime.timedelta(days=1)
-        )
+        measurement1 = createMeasurement(timezone.now() - datetime.timedelta(days=3))
+        measurement2 = createMeasurement(timezone.now() - datetime.timedelta(days=1))
 
         response = self.client.get(reverse("tracker:home"))
 
@@ -67,7 +62,7 @@ class MeasurementListViewTests(TestCase):
         """
         Single empty measurement hasn't got a difference attributes.
         """
-        self.createMeasurement()
+        createMeasurement()
 
         response = self.client.get(reverse("tracker:home"))
 
@@ -89,8 +84,8 @@ class MeasurementListViewTests(TestCase):
         """
         Two empty measurements hasn't got a difference attributes.
         """
-        self.createMeasurement(timezone.now() - datetime.timedelta(days=3))
-        self.createMeasurement(timezone.now() - datetime.timedelta(days=1))
+        createMeasurement(timezone.now() - datetime.timedelta(days=3))
+        createMeasurement(timezone.now() - datetime.timedelta(days=1))
 
         response = self.client.get(reverse("tracker:home"))
 
@@ -124,7 +119,7 @@ class MeasurementListViewTests(TestCase):
         """
         Single non-empty measurement hasn't got a difference attributes.
         """
-        self.createMeasurement(chest=12.0, waist=32.32, hips=3.03, weight=44.54)
+        createMeasurement(chest=12.0, waist=32.32, hips=3.03, weight=44.54)
 
         response = self.client.get(reverse("tracker:home"))
 
@@ -147,14 +142,14 @@ class MeasurementListViewTests(TestCase):
         The second of two non-empty measurements has got the correct difference
         attributes.
         """
-        self.createMeasurement(
+        createMeasurement(
             timezone.now() - datetime.timedelta(days=3),
             chest=12.0,
             waist=32.32,
             hips=2,
             weight=32.12,
         )
-        self.createMeasurement(
+        createMeasurement(
             timezone.now() - datetime.timedelta(days=1),
             chest=12.0,
             waist=22.11,
@@ -194,10 +189,10 @@ class MeasurementListViewTests(TestCase):
         Two measurements with equal time and difference time of publication
         are listed in the correct order.
         """
-        measurement1 = self.createMeasurement(
+        measurement1 = createMeasurement(
             timezone.now() - datetime.timedelta(days=1, hours=3, minutes=12, seconds=33)
         )
-        measurement2 = self.createMeasurement(
+        measurement2 = createMeasurement(
             timezone.now() - datetime.timedelta(days=1, hours=6, minutes=33, seconds=56)
         )
 
@@ -207,3 +202,45 @@ class MeasurementListViewTests(TestCase):
         self.assertQuerysetEqual(
             list(response.context["measurement_list"]), [measurement1, measurement2]
         )
+
+
+class MeasurementChartViewTests(TestCase):
+    def setUp(self):
+        User.objects.create(username="user", password="pass")
+
+    def test_no_measurements(self):
+        """
+        If no measurements exist, an appropriate message is displayed.
+        """
+        response = self.client.get(reverse("tracker:charts"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context["measurement_list"], [])
+        self.assertContains(response, "No measurements are available!")
+
+    def test_with_measurements(self):
+        """
+        If measurements exists, a chart is displayed.
+        """
+        measurement1 = createMeasurement(
+            timezone.now() - datetime.timedelta(days=3),
+            chest=12.0,
+            waist=32.32,
+            hips=2,
+            weight=32.12,
+        )
+        measurement2 = createMeasurement(
+            timezone.now() - datetime.timedelta(days=1),
+            chest=12.0,
+            waist=22.11,
+            hips=3.03,
+            weight=44.54,
+        )
+
+        response = self.client.get(reverse("tracker:charts"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(
+            response.context["measurement_list"], [measurement2, measurement1]
+        )
+        self.assertContains(response, '<canvas id="chart">')

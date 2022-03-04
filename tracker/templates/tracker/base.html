@@ -13,7 +13,7 @@
         <!-- Bootstrap Icons -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
 
-        <link rel="stylesheet" type="text/css" href="{% static 'tracker/main.css' %}" />
+        <link rel="stylesheet" type="text/css" href="{% static 'tracker/css/main.css' %}" />
 
         {% if title %}
             <title>Body Measurement Tracker - {{ title }}</title>
@@ -32,13 +32,13 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            <a class="nav-link active" aria-current="page" href="{% url 'tracker:home' %}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Entries</a>
+                            <a class="nav-link" href="{% url 'tracker:home' %}">Entries</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Charts</a>
+                            <a class="nav-link" href="{% url 'tracker:charts' %}">Charts</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav">
