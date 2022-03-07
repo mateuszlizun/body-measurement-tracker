@@ -22,6 +22,14 @@
         {% endif %}
     </head>
     <body class="bg-gradient-primary">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
         {% block content %}{% endblock %}
 
         <!-- Bootstrap Bundle with Popper -->
