@@ -13,10 +13,18 @@ body {
     background-size: cover;
 }
 
-.bg-register-image {
-    background: url("https://source.unsplash.com/ZSpkUThb7qk/600x800");
+.bg-register-image,
+.bg-login-image {
     background-position: center;
     background-size: cover;
+}
+
+.bg-register-image {
+    background: url("https://source.unsplash.com/ZSpkUThb7qk/600x800");
+}
+
+.bg-login-image {
+    background: url("https://source.unsplash.com/Xg-ut7qtJiM/600x800");
 }
 
 .o-hidden {
