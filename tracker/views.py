@@ -1,11 +1,11 @@
 from django.views import generic
 from django.contrib.auth.models import User
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Measurement
 
 
-class MeasurementListView(generic.ListView):
+class MeasurementListView(LoginRequiredMixin, generic.ListView):
     model = Measurement
 
     def get_queryset(self):
@@ -35,7 +35,7 @@ class MeasurementListView(generic.ListView):
         return measurements
 
 
-class MeasurementChartView(generic.ListView):
+class MeasurementChartView(LoginRequiredMixin, generic.ListView):
     model = Measurement
     template_name = "tracker/charts.html"
 
