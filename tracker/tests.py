@@ -32,12 +32,12 @@ def createUser(username, password):
 
 
 class MeasurementListViewTests(TestCase):
-    def logIn(self):
-        self.client.force_login(self.user)
+    def logIn(self, user):
+        self.client.force_login(user)
 
     def setUp(self):
         self.user = createUser("user", "pass")
-        self.logIn()
+        self.logIn(self.user)
 
     def test_no_measurements(self):
         """
@@ -236,14 +236,32 @@ class MeasurementListViewTests(TestCase):
             list(response.context["measurement_list"]), [measurement1, measurement2]
         )
 
+    def test_logged_in_user_measurements_only(self):
+        """
+        Only logged in user measurements are displayed on the page.
+        """
+        user2 = createUser("user2", "pass")
+
+        measurement1 = createMeasurement(user=self.user)
+        measurement2 = createMeasurement(user=self.user)
+        createMeasurement(user=user2)
+        createMeasurement(user=user2)
+
+        response = self.client.get(reverse("tracker:home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(
+            list(response.context["measurement_list"]), [measurement1, measurement2]
+        )
+
 
 class MeasurementChartViewTests(TestCase):
-    def logIn(self):
-        self.client.force_login(self.user)
+    def logIn(self, user):
+        self.client.force_login(user)
 
     def setUp(self):
         self.user = createUser("user", "pass")
-        self.logIn()
+        self.logIn(self.user)
 
     def test_no_measurements(self):
         """
@@ -283,3 +301,21 @@ class MeasurementChartViewTests(TestCase):
             response.context["measurement_list"], [measurement2, measurement1]
         )
         self.assertContains(response, '<canvas id="chart">')
+
+    def test_logged_in_user_measurements_only(self):
+        """
+        Only logged in user measurements are displayed on the chart.
+        """
+        user2 = createUser("user2", "pass")
+
+        measurement1 = createMeasurement(user=self.user)
+        measurement2 = createMeasurement(user=self.user)
+        createMeasurement(user=user2)
+        createMeasurement(user=user2)
+
+        response = self.client.get(reverse("tracker:charts"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(
+            list(response.context["measurement_list"]), [measurement1, measurement2]
+        )

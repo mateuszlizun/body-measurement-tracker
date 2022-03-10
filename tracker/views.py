@@ -1,5 +1,4 @@
 from django.views import generic
-from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Measurement
@@ -9,8 +8,7 @@ class MeasurementListView(LoginRequiredMixin, generic.ListView):
     model = Measurement
 
     def get_queryset(self):
-        # TODO: logged in user ID should be retrieved here
-        measurements = Measurement.objects.filter(user=User.objects.get(pk=1)).order_by(
+        measurements = Measurement.objects.filter(user=self.request.user).order_by(
             "-pub_date"
         )
 
@@ -40,7 +38,4 @@ class MeasurementChartView(LoginRequiredMixin, generic.ListView):
     template_name = "tracker/charts.html"
 
     def get_queryset(self):
-        # TODO: logged in user ID should be retrieved here
-        return Measurement.objects.filter(user=User.objects.get(pk=1)).order_by(
-            "-pub_date"
-        )
+        return Measurement.objects.filter(user=self.request.user).order_by("-pub_date")
