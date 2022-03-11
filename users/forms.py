@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 
 
 class UserRegisterForm(UserCreationForm):
@@ -16,3 +16,10 @@ class UserRegisterForm(UserCreationForm):
         self.fields["email"].help_text = None
         self.fields["password1"].help_text = None
         self.fields["password2"].help_text = None
+
+
+class CustomSetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["new_password1"].help_text = None
+        self.fields["new_password2"].help_text = None

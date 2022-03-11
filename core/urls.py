@@ -18,6 +18,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
 from users import views as users_views
+from users.forms import CustomSetPasswordForm
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -39,6 +40,14 @@ urlpatterns = [
             template_name="users/password_reset_done.html"
         ),
         name="password_reset_done",
+    ),
+    path(
+        "password-reset-confirm/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="users/password_reset_confirm.html",
+            form_class=CustomSetPasswordForm,
+        ),
+        name="password_reset_confirm",
     ),
     path("", include("tracker.urls")),
 ]
