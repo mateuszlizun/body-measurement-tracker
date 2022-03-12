@@ -1,0 +1,17 @@
+{% extends "tracker/base.html" %}
+{% block content %}
+    <div class="my-5">
+        <div class="card shadow-sm col-8 offset-2 col-md-6 offset-md-3 col-xl-4 offset-xl-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">My profile</h6>
+            </div>
+            <div class="card-body d-flex">
+                <img class="rounded-circle account-img me-4 mb-3" src="{{ user.profile.image.url }}">
+                <div>
+                    <h2 class="account-heading">{{ user.username }}</h2>
+                    <p class="text-secondary">{{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+    <div>
+{% endblock content%}
