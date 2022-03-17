@@ -50,10 +50,16 @@ class DashboardView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(DashboardView, self).get_context_data(*args, **kwargs)
-        context["summary_data"] = Measurement.objects.filter(
-            user=self.request.user
-        ).latest("pub_date")
-        context["latest_measurements"] = Measurement.objects.filter(
-            user=self.request.user
-        ).order_by("-pub_date")[:5]
+
+        try:
+            context["summary_data"] = Measurement.objects.filter(
+                user=self.request.user
+            ).latest("pub_date")
+            context["latest_measurements"] = Measurement.objects.filter(
+                user=self.request.user
+            ).order_by("-pub_date")[:5]
+        except Measurement.DoesNotExist:
+            context["summary_data"] = None
+            context["latest_measurements"] = None
+
         return context

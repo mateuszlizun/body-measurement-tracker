@@ -6,229 +6,232 @@
     <div>
         <h1>Dashboard</h1>
     </div>
+    {% if measurement_list and summary_data and latest_measurements %}
+        <!-- Page Content -->
+        <div class="dashboard-page-content">
+            <!-- Measurement Summary Cards -->
+            <div class="row">
+                <div class="col-xl-3 col-md-6 my-2">
+                    <div class="card dashboard-summary-card shadow py-2">
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col">
+                                    <p class="card-title text-uppercase text-xs font-weight-bold">chest</p>
+                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">{{ summary_data.chest }} cm</p>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="card-icon fa-solid fa-weight-scale"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 my-2">
+                    <div class="card dashboard-summary-card shadow py-2">
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col">
+                                    <p class="card-title text-uppercase text-xs font-weight-bold">waist</p>
+                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">{{ summary_data.waist }} cm</p>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="card-icon fa-solid fa-weight-scale"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 my-2">
+                    <div class="card dashboard-summary-card shadow py-2">
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col">
+                                    <p class="card-title text-uppercase text-xs font-weight-bold">hips</p>
+                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">{{ summary_data.hips }} cm</p>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="card-icon fa-solid fa-weight-scale"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 my-2">
+                    <div class="card dashboard-summary-card shadow py-2">
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col">
+                                    <p class="card-title text-uppercase text-xs font-weight-bold">weight</p>
+                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">{{ summary_data.weight }} kg</p>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="card-icon fa-solid fa-weight-scale"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Page Content -->
-    <div class="dashboard-page-content">
-        <!-- Measurement Summary Cards -->
-        <div class="row">
-            <div class="col-xl-3 col-md-6 my-2">
-                <div class="card dashboard-summary-card shadow py-2">
-                    <div class="card-body p-3">
-                        <div class="row">
-                            <div class="col">
-                                <p class="card-title text-uppercase text-xs font-weight-bold">chest</p>
-                                <p class="card-text h5 mb-0 font-weight-bold text-gray-800">{{ summary_data.chest }} cm</p>
-                            </div>
-                            <div class="col-auto">
-                                <i class="card-icon fa-solid fa-weight-scale"></i>
+            <div class="row">
+                <div class="col-xl-8 col-lg-7 my-4">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            Measurements
+                        </div>
+                        <div class="card-body">
+                            <canvas id="measurementsChart" class="dashboard-measurements-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-5 my-4">
+                    <div class="card dashboard-card-full-row-height shadow">
+                        <div class="card-header">
+                            Last records
+                        </div>
+                        <div class="card-body overflow-auto dashboard-last-records-list">
+                            <div class="list-group">
+                                {% for measurement in latest_measurements %}
+                                    <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+                                        <div>
+                                            {% comment %} <h5 class="mb-1">List group item heading</h5> {% endcomment %}
+                                            <small>{{ measurement.pub_date|timesince }} ago</small>
+                                        </div>
+                                        <div class="mb-1">
+                                            <span class="text-nowrap">Chest: {{ measurement.chest }} cm, </span>
+                                            <span class="text-nowrap">Waist: {{ measurement.waist }} cm, </span>
+                                            <span class="text-nowrap">Hips: {{ measurement.hips }} cm</span>
+                                        </div>
+                                        <small>Weight: {{ measurement.weight }} kg</small>
+                                    </a>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6 my-2">
-                <div class="card dashboard-summary-card shadow py-2">
-                    <div class="card-body p-3">
-                        <div class="row">
-                            <div class="col">
-                                <p class="card-title text-uppercase text-xs font-weight-bold">waist</p>
-                                <p class="card-text h5 mb-0 font-weight-bold text-gray-800">{{ summary_data.waist }} cm</p>
+
+            <div class="row">
+                <div class="col-lg-6 my-4">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            Goals
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-xs font-weight-bold">Chest</span>
+                                    <span class="text-xs font-weight-bold">25%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
                             </div>
-                            <div class="col-auto">
-                                <i class="card-icon fa-solid fa-weight-scale"></i>
+                            <div class="my-3">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-xs font-weight-bold">Chest</span>
+                                    <span class="text-xs font-weight-bold">50%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="my-3">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-xs font-weight-bold">Chest</span>
+                                    <span class="text-xs font-weight-bold">77%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" style="width: 77%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-xs font-weight-bold">Chest</span>
+                                    <span class="text-xs font-weight-bold">Complete!</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-xl-3 col-md-6 my-2">
-                <div class="card dashboard-summary-card shadow py-2">
-                    <div class="card-body p-3">
-                        <div class="row">
-                            <div class="col">
-                                <p class="card-title text-uppercase text-xs font-weight-bold">hips</p>
-                                <p class="card-text h5 mb-0 font-weight-bold text-gray-800">{{ summary_data.hips }} cm</p>
-                            </div>
-                            <div class="col-auto">
-                                <i class="card-icon fa-solid fa-weight-scale"></i>
-                            </div>
+                <div class="col-lg-6 my-4">
+                    <div class="card shadow dashboard-card-full-row-height">
+                        <div class="card-header">
+                            Weight
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6 my-2">
-                <div class="card dashboard-summary-card shadow py-2">
-                    <div class="card-body p-3">
-                        <div class="row">
-                            <div class="col">
-                                <p class="card-title text-uppercase text-xs font-weight-bold">weight</p>
-                                <p class="card-text h5 mb-0 font-weight-bold text-gray-800">{{ summary_data.weight }} kg</p>
-                            </div>
-                            <div class="col-auto">
-                                <i class="card-icon fa-solid fa-weight-scale"></i>
-                            </div>
+                        <div class="card-body">
+                            <canvas id="weightChart"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-xl-8 col-lg-7 my-4">
-                <div class="card shadow">
-                    <div class="card-header">
-                        Measurements
-                    </div>
-                    <div class="card-body">
-                        <canvas id="measurementsChart" class="dashboard-measurements-chart"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-4 col-lg-5 my-4">
-                <div class="card dashboard-card-full-row-height shadow">
-                    <div class="card-header">
-                        Last records
-                    </div>
-                    <div class="card-body overflow-auto dashboard-last-records-list">
-                        <div class="list-group">
-                            {% for measurement in latest_measurements %}
-                                <a href="#" class="list-group-item list-group-item-action" aria-current="true">
-                                    <div>
-                                        {% comment %} <h5 class="mb-1">List group item heading</h5> {% endcomment %}
-                                        <small>{{ measurement.pub_date|timesince }} ago</small>
-                                    </div>
-                                    <div class="mb-1">
-                                        <span class="text-nowrap">Chest: {{ measurement.chest }} cm, </span>
-                                        <span class="text-nowrap">Waist: {{ measurement.waist }} cm, </span>
-                                        <span class="text-nowrap">Hips: {{ measurement.hips }} cm</span>
-                                    </div>
-                                    <small>Weight: {{ measurement.weight }} kg</small>
-                                </a>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-6 my-4">
-                <div class="card shadow">
-                    <div class="card-header">
-                        Goals
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-xs font-weight-bold">Chest</span>
-                                <span class="text-xs font-weight-bold">25%</span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-                        <div class="my-3">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-xs font-weight-bold">Chest</span>
-                                <span class="text-xs font-weight-bold">50%</span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-                        <div class="my-3">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-xs font-weight-bold">Chest</span>
-                                <span class="text-xs font-weight-bold">77%</span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" style="width: 77%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-xs font-weight-bold">Chest</span>
-                                <span class="text-xs font-weight-bold">Complete!</span>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 my-4">
-                <div class="card shadow dashboard-card-full-row-height">
-                    <div class="card-header">
-                        Weight
-                    </div>
-                    <div class="card-body">
-                        <canvas id="weightChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script type="text/javascript">
-        const measurementsLabels = [
-            {% for data in measurement_list %}
-                '{{data.pub_date|date:"d.m.y"}}',
-            {% endfor %}
-        ];
-        const measurementsDatasets = [
-            {
-                label: 'Chest',
-                backgroundColor: 'rgb(181, 186, 114)',
-                borderColor: 'rgb(181, 186, 114)',
-                data: [
-                    {% for data in measurement_list %}
-                        '{{data.chest}}',
-                    {% endfor %}
-                ],
-                tension: 0.4
-            },
-            {
-                label: 'Waist',
-                backgroundColor: 'rgb(125, 111, 134)',
-                borderColor: 'rgb(125, 111, 134)',
-                data: [
-                    {% for data in measurement_list %}
-                        '{{data.waist}}',
-                    {% endfor %}
-                ],
-                tension: 0.4
-            },
-            {
-                label: 'Hips',
-                backgroundColor: 'rgb(79, 53, 155)',
-                borderColor: 'rgb(79, 53, 155)',
-                data: [
-                    {% for data in measurement_list %}
-                        '{{data.hips}}',
-                    {% endfor %}
-                ],
-                tension: 0.4
-            }];
-        const weightLabels = [
-            {% for data in measurement_list %}
-                '{{data.pub_date|date:"d.m.y"}}',
-            {% endfor %}
-        ];
-        const weightDatasets = [
-            {
-                label: 'Weight',
-                backgroundColor: 'rgb(125, 111, 134)',
-                borderColor: 'rgb(125, 111, 134)',
-                data: [
-                    {% for data in measurement_list %}
-                        '{{data.weight}}',
-                    {% endfor %}
-                ],
-                tension: 0.4,
-                fill: true
-            }];
-    </script>
-    <script src="{% static 'tracker/js/charts.js' %}"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script type="text/javascript">
+            const measurementsLabels = [
+                {% for data in measurement_list %}
+                    '{{data.pub_date|date:"d.m.y"}}',
+                {% endfor %}
+            ];
+            const measurementsDatasets = [
+                {
+                    label: 'Chest',
+                    backgroundColor: 'rgb(181, 186, 114)',
+                    borderColor: 'rgb(181, 186, 114)',
+                    data: [
+                        {% for data in measurement_list %}
+                            '{{data.chest}}',
+                        {% endfor %}
+                    ],
+                    tension: 0.4
+                },
+                {
+                    label: 'Waist',
+                    backgroundColor: 'rgb(125, 111, 134)',
+                    borderColor: 'rgb(125, 111, 134)',
+                    data: [
+                        {% for data in measurement_list %}
+                            '{{data.waist}}',
+                        {% endfor %}
+                    ],
+                    tension: 0.4
+                },
+                {
+                    label: 'Hips',
+                    backgroundColor: 'rgb(79, 53, 155)',
+                    borderColor: 'rgb(79, 53, 155)',
+                    data: [
+                        {% for data in measurement_list %}
+                            '{{data.hips}}',
+                        {% endfor %}
+                    ],
+                    tension: 0.4
+                }];
+            const weightLabels = [
+                {% for data in measurement_list %}
+                    '{{data.pub_date|date:"d.m.y"}}',
+                {% endfor %}
+            ];
+            const weightDatasets = [
+                {
+                    label: 'Weight',
+                    backgroundColor: 'rgb(125, 111, 134)',
+                    borderColor: 'rgb(125, 111, 134)',
+                    data: [
+                        {% for data in measurement_list %}
+                            '{{data.weight}}',
+                        {% endfor %}
+                    ],
+                    tension: 0.4,
+                    fill: true
+                }];
+        </script>
+        <script src="{% static 'tracker/js/charts.js' %}"></script>
+    {% else %}
+        <p>No measurements are available!<p>
+    {% endif %}
 {% endblock content%}
