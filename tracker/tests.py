@@ -319,3 +319,86 @@ class MeasurementChartViewTests(TestCase):
         self.assertQuerysetEqual(
             list(response.context["measurement_list"]), [measurement1, measurement2]
         )
+
+
+class DashboardViewTests(TestCase):
+    def logIn(self, user):
+        self.client.force_login(user)
+
+    def setUp(self):
+        self.user = createUser("user", "pass")
+        self.logIn(self.user)
+
+    def test_no_measurements(self):
+        """
+        If no measurements exist, an appropriate message is displayed.
+        """
+        response = self.client.get(reverse("tracker:home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(response.context["measurement_list"], [])
+        self.assertEquals(response.context["summary_data"], None)
+        self.assertEquals(response.context["latest_measurements"], None)
+        self.assertContains(response, "No measurements are available!")
+
+    def test_with_measurements(self):
+        """
+        If measurements exists, a dashboard content is displayed.
+        """
+        measurement1 = createMeasurement(
+            user=self.user,
+            pub_date=timezone.now() - datetime.timedelta(days=3),
+            chest=12.0,
+            waist=32.32,
+            hips=2,
+            weight=32.12,
+        )
+        measurement2 = createMeasurement(
+            user=self.user,
+            pub_date=timezone.now() - datetime.timedelta(days=1),
+            chest=12.0,
+            waist=22.11,
+            hips=3.03,
+            weight=44.54,
+        )
+
+        response = self.client.get(reverse("tracker:home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(
+            response.context["measurement_list"], [measurement1, measurement2]
+        )
+        self.assertQuerysetEqual(
+            response.context["latest_measurements"], [measurement2, measurement1]
+        )
+        self.assertEqual(response.context["summary_data"], measurement2)
+        self.assertContains(
+            response,
+            '<canvas id="measurementsChart" class="dashboard-measurements-chart"></canvas>',
+        )
+        self.assertContains(
+            response,
+            '<canvas id="weightChart"></canvas>',
+        )
+
+    def test_logged_in_user_measurements_only(self):
+        """
+        Only logged in user measurements are displayed on the dashboard.
+        """
+        user2 = createUser("user2", "pass")
+
+        measurement1 = createMeasurement(user=self.user)
+        measurement2 = createMeasurement(user=self.user)
+        createMeasurement(user=user2)
+        createMeasurement(user=user2)
+
+        response = self.client.get(reverse("tracker:home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(
+            list(response.context["measurement_list"]), [measurement1, measurement2]
+        )
+        self.assertQuerysetEqual(
+            list(response.context["latest_measurements"]), [measurement1, measurement2]
+        )
+        self.assertEqual(response.context["summary_data"], measurement1)
