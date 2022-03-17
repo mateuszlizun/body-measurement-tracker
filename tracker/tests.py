@@ -43,7 +43,7 @@ class MeasurementListViewTests(TestCase):
         """
         If no measurements exist, an empty page is displayed.
         """
-        response = self.client.get(reverse("tracker:home"))
+        response = self.client.get(reverse("tracker:history"))
 
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context["measurement_list"], [])
@@ -54,7 +54,7 @@ class MeasurementListViewTests(TestCase):
         """
         measurement = createMeasurement(user=self.user)
 
-        response = self.client.get(reverse("tracker:home"))
+        response = self.client.get(reverse("tracker:history"))
 
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(response.context["measurement_list"], [measurement])
@@ -70,7 +70,7 @@ class MeasurementListViewTests(TestCase):
             user=self.user, pub_date=timezone.now() - datetime.timedelta(days=1)
         )
 
-        response = self.client.get(reverse("tracker:home"))
+        response = self.client.get(reverse("tracker:history"))
 
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(
@@ -83,7 +83,7 @@ class MeasurementListViewTests(TestCase):
         """
         createMeasurement(user=self.user)
 
-        response = self.client.get(reverse("tracker:home"))
+        response = self.client.get(reverse("tracker:history"))
 
         self.assertEqual(response.status_code, 200)
         self.assertFalse(
@@ -112,7 +112,7 @@ class MeasurementListViewTests(TestCase):
             pub_date=timezone.now() - datetime.timedelta(days=1),
         )
 
-        response = self.client.get(reverse("tracker:home"))
+        response = self.client.get(reverse("tracker:history"))
 
         self.assertEqual(response.status_code, 200)
         self.assertFalse(
@@ -148,7 +148,7 @@ class MeasurementListViewTests(TestCase):
             user=self.user, chest=12.0, waist=32.32, hips=3.03, weight=44.54
         )
 
-        response = self.client.get(reverse("tracker:home"))
+        response = self.client.get(reverse("tracker:history"))
 
         self.assertEqual(response.status_code, 200)
         self.assertFalse(
@@ -186,7 +186,7 @@ class MeasurementListViewTests(TestCase):
             weight=44.54,
         )
 
-        response = self.client.get(reverse("tracker:home"))
+        response = self.client.get(reverse("tracker:history"))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["measurement_list"][0].chest_difference, 0)
@@ -229,7 +229,7 @@ class MeasurementListViewTests(TestCase):
             - datetime.timedelta(days=1, hours=6, minutes=33, seconds=56),
         )
 
-        response = self.client.get(reverse("tracker:home"))
+        response = self.client.get(reverse("tracker:history"))
 
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(
@@ -247,7 +247,7 @@ class MeasurementListViewTests(TestCase):
         createMeasurement(user=user2)
         createMeasurement(user=user2)
 
-        response = self.client.get(reverse("tracker:home"))
+        response = self.client.get(reverse("tracker:history"))
 
         self.assertEqual(response.status_code, 200)
         self.assertQuerysetEqual(
