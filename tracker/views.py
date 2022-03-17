@@ -39,3 +39,21 @@ class MeasurementChartView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return Measurement.objects.filter(user=self.request.user).order_by("-pub_date")
+
+
+class DashboardView(LoginRequiredMixin, generic.ListView):
+    model = Measurement
+    template_name = "tracker/dashboard.html"
+
+    def get_queryset(self):
+        return Measurement.objects.filter(user=self.request.user).order_by("pub_date")
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(DashboardView, self).get_context_data(*args, **kwargs)
+        context["summary_data"] = Measurement.objects.filter(
+            user=self.request.user
+        ).latest("pub_date")
+        context["latest_measurements"] = Measurement.objects.filter(
+            user=self.request.user
+        ).order_by("-pub_date")[:5]
+        return context

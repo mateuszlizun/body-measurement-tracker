@@ -75,3 +75,27 @@ body {
     height: 125px;
     width: 125px;
 }
+
+.dashboard-page-content .dashboard-summary-card {
+    border-left: .25rem solid #4e73df;
+}
+
+.dashboard-page-content .card-title {
+    color: #4e73df;
+    font-size: .8rem;
+    margin-bottom: .2rem;
+}
+
+.dashboard-page-content .card-icon {
+    font-size: 3em;
+    color: #dddfeb;
+}
+
+.dashboard-page-content .dashboard-card-full-row-height {
+    height: 100%;
+}
+
+.dashboard-page-content .dashboard-measurements-chart,
+.dashboard-page-content .dashboard-last-records-list {
+    height: 20rem;
+}

@@ -1,15 +1,31 @@
-const data = {
-    labels: labels,
-    datasets: datasets
+const measurementsData = {
+    labels: measurementsLabels,
+    datasets: measurementsDatasets
 };
 
-const config = {
+const measurementsConfig = {
     type: 'line',
-    data: data,
-    options: {}
+    data: measurementsData,
+    options: { maintainAspectRatio: false }
 };
 
-const myChart = new Chart(
-    document.getElementById('chart'),
-    config
+const measurementsChart = new Chart(
+    document.getElementById('measurementsChart'),
+    measurementsConfig
+);
+
+const weightData = {
+    labels: weightLabels,
+    datasets: weightDatasets
+};
+
+const weightConfig = {
+    type: 'line',
+    data: weightData,
+    options: { maintainAspectRatio: false }
+};
+
+const weightChart = new Chart(
+    document.getElementById('weightChart'),
+    weightConfig
 );
