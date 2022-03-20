@@ -1,7 +1,8 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .models import Measurement
+from .forms import MeasurementCreateForm
 
 
 class MeasurementListView(LoginRequiredMixin, ListView):
@@ -71,3 +72,12 @@ class MeasurementDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
     def test_func(self):
         measurement = self.get_object()
         return self.request.user == measurement.user
+
+
+class MeasurementCreateView(LoginRequiredMixin, CreateView):
+    model = Measurement
+    form_class = MeasurementCreateForm
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)

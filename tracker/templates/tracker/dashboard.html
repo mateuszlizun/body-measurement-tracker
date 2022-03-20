@@ -3,8 +3,16 @@
 {% load static %}
 {% block content %}
     <!-- Page Heading -->
-    <div>
+    <div class="d-flex flex-column flex-md-row justify-content-between">
         <h1>Dashboard</h1>
+        <div>
+            <a href="{% url 'tracker:measurement-create' %}">
+                <button type="button" class="btn btn-primary shadow">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Add measurements</span>
+                </button>
+            </a>
+        </div>
     </div>
     {% if measurement_list and summary_data and latest_measurements %}
         <!-- Page Content -->
