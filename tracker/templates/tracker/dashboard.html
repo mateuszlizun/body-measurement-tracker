@@ -92,7 +92,7 @@
                         <div class="card-body overflow-auto dashboard-last-records-list">
                             <div class="list-group">
                                 {% for measurement in latest_measurements %}
-                                    <a href="#" class="list-group-item list-group-item-action" aria-current="true">
+                                    <a href="{% url 'tracker:measurement-detail' measurement.id %}" class="list-group-item list-group-item-action" aria-current="true">
                                         <div>
                                             {% comment %} <h5 class="mb-1">List group item heading</h5> {% endcomment %}
                                             <small>{{ measurement.pub_date|timesince }} ago</small>

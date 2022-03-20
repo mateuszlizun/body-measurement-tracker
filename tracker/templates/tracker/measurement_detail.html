@@ -1,0 +1,29 @@
+{% extends "tracker/base.html" %}
+{% load mathfilters %}
+{% block content %}
+    <div class="row justify-content-center ms-3 me-3">
+        <div class="card mb-3 p-0 shadow-sm col-sm-12 col-md-8">
+            <div class="card-body">
+                <h5 class="card-title pb-1">{{ object.pub_date|date:"F d, Y" }}</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div>Chest</div>
+                        <div>{{ object.chest }} cm</div>
+                    </li>
+                    <li class="list-group-item">
+                        <div>Waist</div>
+                        <div>{{ object.waist }} cm</div>
+                    </li>
+                    <li class="list-group-item">
+                        <div>Hips</div>
+                        <div>{{ object.hips }} cm</div>
+                    </li>
+                    <li class="list-group-item">
+                        <div>Weight</div>
+                        <div>{{ object.weight }} kg</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock content%}
