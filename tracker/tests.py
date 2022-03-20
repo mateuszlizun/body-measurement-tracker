@@ -402,3 +402,65 @@ class DashboardViewTests(TestCase):
             list(response.context["latest_measurements"]), [measurement1, measurement2]
         )
         self.assertEqual(response.context["summary_data"], measurement1)
+
+
+class MeasurementDetailViewTests(TestCase):
+    def logIn(self, user):
+        self.client.force_login(user)
+
+    def setUp(self):
+        self.user = createUser("user", "pass")
+        self.logIn(self.user)
+
+    def test_no_measurement_with_the_given_id(self):
+        """
+        If no measurement with the given id exist, a 404 status code is returned.
+        """
+        response = self.client.get(
+            reverse("tracker:measurement-detail", kwargs={"pk": 1})
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_no_measurement_for_the_logged_user_(self):
+        """
+        If no measurement with the given id exist for the logged user,
+        a 403 status code is returned.
+        """
+        user2 = createUser("user2", "pass")
+        createMeasurement(user=user2)
+
+        response = self.client.get(
+            reverse("tracker:measurement-detail", kwargs={"pk": 1})
+        )
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_with_measurement(self):
+        """
+        If measurement with given id exists, a detail view content is displayed.
+        """
+        pub_date = timezone.now() - datetime.timedelta(days=3)
+        chest = 12.0
+        waist = 32.32
+        hips = 2
+        weight = 32.12
+
+        createMeasurement(
+            user=self.user,
+            pub_date=pub_date,
+            chest=chest,
+            waist=waist,
+            hips=hips,
+            weight=weight,
+        )
+        response = self.client.get(
+            reverse("tracker:measurement-detail", kwargs={"pk": 1})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["object"].pub_date, pub_date)
+        self.assertEqual(response.context["object"].chest, chest)
+        self.assertEqual(response.context["object"].waist, round(Decimal(waist), 2))
+        self.assertEqual(response.context["object"].hips, hips)
+        self.assertEqual(response.context["object"].weight, round(Decimal(weight), 2))

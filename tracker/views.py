@@ -1,10 +1,10 @@
-from django.views import generic
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .models import Measurement
 
 
-class MeasurementListView(LoginRequiredMixin, generic.ListView):
+class MeasurementListView(LoginRequiredMixin, ListView):
     model = Measurement
 
     def get_queryset(self):
@@ -33,7 +33,7 @@ class MeasurementListView(LoginRequiredMixin, generic.ListView):
         return measurements
 
 
-class MeasurementChartView(LoginRequiredMixin, generic.ListView):
+class MeasurementChartView(LoginRequiredMixin, ListView):
     model = Measurement
     template_name = "tracker/charts.html"
 
@@ -41,7 +41,7 @@ class MeasurementChartView(LoginRequiredMixin, generic.ListView):
         return Measurement.objects.filter(user=self.request.user).order_by("-pub_date")
 
 
-class DashboardView(LoginRequiredMixin, generic.ListView):
+class DashboardView(LoginRequiredMixin, ListView):
     model = Measurement
     template_name = "tracker/dashboard.html"
 
@@ -63,3 +63,11 @@ class DashboardView(LoginRequiredMixin, generic.ListView):
             context["latest_measurements"] = None
 
         return context
+
+
+class MeasurementDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = Measurement
+
+    def test_func(self):
+        measurement = self.get_object()
+        return self.request.user == measurement.user
