@@ -13,4 +13,9 @@ urlpatterns = [
         views.MeasurementDetailView.as_view(),
         name="measurement-detail",
     ),
+    path(
+        "measurement/new/",
+        views.MeasurementCreateView.as_view(),
+        name="measurement-create",
+    ),
 ]

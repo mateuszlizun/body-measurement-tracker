@@ -1,0 +1,22 @@
+{% extends "tracker/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="row justify-content-center ms-3 me-3">
+        <div class="card mb-3 p-0 shadow-sm col-sm-12 col-md-8">
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <fieldset>
+                        <legend>Add measurements</legend>
+                        {{ form|crispy }}
+                    </fieldset>
+                    <div class="input-group my-4">
+                        <button type="submit" class="btn btn-primary btn-user btn-block">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content%}
