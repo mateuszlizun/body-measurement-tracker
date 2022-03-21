@@ -1,0 +1,5 @@
+TRACKER_APP_NAME = "tracker"
+HOME_PATH_NAME = "home"
+HISTORY_PATH_NAME = "history"
+MEASUREMENT_DETAIL_PATH_NAME = "measurement-detail"
+MEASUREMENT_CREATE_PATH_NAME = "measurement-create"
