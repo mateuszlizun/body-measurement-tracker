@@ -1,6 +1,12 @@
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from .models import Measurement
 from .forms import MeasurementCreateUpdateForm
@@ -105,6 +111,29 @@ class MeasurementUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
 
     def get_context_data(self, *args, **kwargs):
         context = super(MeasurementUpdateView, self).get_context_data(*args, **kwargs)
+
+        history_url = get_path_name_with_namespace(HISTORY_PATH_NAME)
+
+        if reverse(history_url) in self.request.META.get("HTTP_REFERER"):
+            previous_url = history_url
+        else:
+            previous_url = get_path_name_with_namespace(MEASUREMENT_DETAIL_PATH_NAME)
+
+        context["previous_url"] = previous_url
+
+        return context
+
+
+class MeasurementDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Measurement
+    success_url = reverse_lazy(get_path_name_with_namespace(HISTORY_PATH_NAME))
+
+    def test_func(self):
+        measurement = self.get_object()
+        return self.request.user == measurement.user
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(MeasurementDeleteView, self).get_context_data(*args, **kwargs)
 
         history_url = get_path_name_with_namespace(HISTORY_PATH_NAME)
 

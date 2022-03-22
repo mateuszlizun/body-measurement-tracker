@@ -8,6 +8,7 @@ from .constant import (
     MEASUREMENT_DETAIL_PATH_NAME,
     MEASUREMENT_CREATE_PATH_NAME,
     MEASUREMENT_UPDATE_PATH_NAME,
+    MEASUREMENT_DELETE_PATH_NAME,
 )
 
 app_name = TRACKER_APP_NAME
@@ -30,5 +31,10 @@ urlpatterns = [
         "measurement/<int:pk>/update/",
         views.MeasurementUpdateView.as_view(),
         name=MEASUREMENT_UPDATE_PATH_NAME,
+    ),
+    path(
+        "measurement/<int:pk>/delete/",
+        views.MeasurementDeleteView.as_view(),
+        name=MEASUREMENT_DELETE_PATH_NAME,
     ),
 ]
