@@ -4,7 +4,17 @@
     <div class="row justify-content-center ms-3 me-3">
         <div class="card mb-3 p-0 shadow-sm col-sm-12 col-md-8">
             <div class="card-body">
-                <h5 class="card-title pb-1">{{ object.pub_date|date:"F d, Y" }}</h5>
+                <div class="d-flex flex-column flex-md-row justify-content-between">
+                    <h5 class="card-title pb-1">{{ object.pub_date|date:"F d, Y" }}</h5>
+                    <div>
+                        <a href="{% url 'tracker:measurement-update' object.id %}">
+                            <button type="button" class="btn btn-sm btn-warning">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                <span>Edit</span>
+                            </button>
+                        </a>
+                    </div>
+                </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <div>Chest</div>

@@ -11,9 +11,12 @@
                         {{ form|crispy }}
                     </fieldset>
                     <div class="input-group my-4">
-                        <button type="submit" class="btn btn-primary btn-user btn-block">
+                        <button type="submit" class="btn btn-primary btn-user btn-block me-2">
                             Save
                         </button>
+                        <a class="btn btn-secondary" href="{% url 'tracker:home' %}">
+                            Cancel
+                        </a>
                     </div>
                 </form>
             </div>

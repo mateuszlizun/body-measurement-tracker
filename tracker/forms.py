@@ -5,7 +5,7 @@ from django.utils import timezone
 from .models import Measurement
 
 
-class MeasurementCreateForm(forms.ModelForm):
+class MeasurementCreateUpdateForm(forms.ModelForm):
     class Meta:
         model = Measurement
         fields = ["pub_date", "chest", "waist", "hips", "weight"]

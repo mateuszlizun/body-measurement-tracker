@@ -1,8 +1,14 @@
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.urls import reverse
 
 from .models import Measurement
-from .forms import MeasurementCreateForm
+from .forms import MeasurementCreateUpdateForm
+from .constant import TRACKER_APP_NAME, HISTORY_PATH_NAME, MEASUREMENT_DETAIL_PATH_NAME
+
+
+def get_path_name_with_namespace(path_name):
+    return TRACKER_APP_NAME + ":" + path_name
 
 
 class MeasurementListView(LoginRequiredMixin, ListView):
@@ -76,8 +82,37 @@ class MeasurementDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
 
 class MeasurementCreateView(LoginRequiredMixin, CreateView):
     model = Measurement
-    form_class = MeasurementCreateForm
+    form_class = MeasurementCreateUpdateForm
+    template_name = "tracker/measurement_create_form.html"
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+
+class MeasurementUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Measurement
+    form_class = MeasurementCreateUpdateForm
+    template_name = "tracker/measurement_update_form.html"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        measurement = self.get_object()
+        return self.request.user == measurement.user
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(MeasurementUpdateView, self).get_context_data(*args, **kwargs)
+
+        history_url = get_path_name_with_namespace(HISTORY_PATH_NAME)
+
+        if reverse(history_url) in self.request.META.get("HTTP_REFERER"):
+            previous_url = history_url
+        else:
+            previous_url = get_path_name_with_namespace(MEASUREMENT_DETAIL_PATH_NAME)
+
+        context["previous_url"] = previous_url
+
+        return context
