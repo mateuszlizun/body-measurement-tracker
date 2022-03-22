@@ -7,13 +7,23 @@
                 <div class="card-body">
                     <div class="d-flex flex-column flex-md-row justify-content-between">
                         <h5 class="card-title pb-1">{{ measurement.pub_date|date:"F d, Y" }}</h5>
-                        <div>
-                            <a href="{% url 'tracker:measurement-update' measurement.id %}">
-                                <button type="button" class="btn btn-sm btn-warning">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                    <span>Edit</span>
-                                </button>
-                            </a>
+                        <div class="d-flex">
+                            <div class="me-2">
+                                <a href="{% url 'tracker:measurement-update' measurement.id %}">
+                                    <button type="button" class="btn btn-sm btn-warning">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        <span>Edit</span>
+                                    </button>
+                                </a>
+                            </div>
+                            <div>
+                                <a href="{% url 'tracker:measurement-delete' measurement.id %}">
+                                    <button type="button" class="btn btn-sm btn-danger">
+                                        <i class="fa-solid fa-trash"></i>
+                                        <span>Delete</span>
+                                    </button>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <ul class="list-group list-group-flush">
