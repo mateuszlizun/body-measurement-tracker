@@ -72,3 +72,13 @@ class Measurement(models.Model):
 
     def get_absolute_url(self):
         return reverse("tracker:measurement-detail", kwargs={"pk": self.pk})
+
+    def is_measurement_value(self, field):
+        return field.name not in ("id", "user", "pub_date")
+
+    def get_value_fields(self):
+        return [
+            (field.name, field.verbose_name, getattr(self, field.name))
+            for field in filter(self.is_measurement_value, Measurement._meta.fields)
+            if getattr(self, field.name)
+        ]
