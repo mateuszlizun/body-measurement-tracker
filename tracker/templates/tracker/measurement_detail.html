@@ -26,22 +26,16 @@
                     </div>
                 </div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <div>Chest</div>
-                        <div>{{ object.chest }} cm</div>
-                    </li>
-                    <li class="list-group-item">
-                        <div>Waist</div>
-                        <div>{{ object.waist }} cm</div>
-                    </li>
-                    <li class="list-group-item">
-                        <div>Hips</div>
-                        <div>{{ object.hips }} cm</div>
-                    </li>
-                    <li class="list-group-item">
-                        <div>Weight</div>
-                        <div>{{ object.weight }} kg</div>
-                    </li>
+                    {% for name, v_name, value in measurement.get_value_fields %}
+                            <li class="list-group-item">
+                                <div>{{ v_name }}</div>
+                                {% if name == "weight" %}
+                                    <div>{{ value }} kg</div>
+                                {% else %}
+                                    <div>{{ value }} cm</div>
+                                {% endif %}
+                            </li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>
