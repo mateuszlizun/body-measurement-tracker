@@ -174,13 +174,11 @@ class MeasurementListViewTests(TestCase):
             pub_date=timezone.now() - datetime.timedelta(days=3),
             chest=12.0,
             waist=32.32,
-            hips=2,
             weight=32.12,
         )
         createMeasurement(
             user=self.user,
             pub_date=timezone.now() - datetime.timedelta(days=1),
-            chest=12.0,
             waist=22.11,
             hips=3.03,
             weight=44.54,
@@ -189,15 +187,17 @@ class MeasurementListViewTests(TestCase):
         response = self.client.get(reverse("tracker:history"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["measurement_list"][0].chest_difference, 0)
         self.assertEqual(
             response.context["measurement_list"][0].waist_difference, Decimal("-10.21")
         )
         self.assertEqual(
-            response.context["measurement_list"][0].hips_difference, Decimal("1.03")
-        )
-        self.assertEqual(
             response.context["measurement_list"][0].weight_difference, Decimal("12.42")
+        )
+        self.assertFalse(
+            hasattr(response.context["measurement_list"][0], "chest_difference")
+        )
+        self.assertFalse(
+            hasattr(response.context["measurement_list"][0], "hips_difference")
         )
 
         self.assertFalse(
@@ -443,7 +443,6 @@ class MeasurementDetailViewTests(TestCase):
         pub_date = timezone.now() - datetime.timedelta(days=3)
         chest = 12.0
         waist = 32.32
-        hips = 2
         weight = 32.12
 
         createMeasurement(
@@ -451,7 +450,6 @@ class MeasurementDetailViewTests(TestCase):
             pub_date=pub_date,
             chest=chest,
             waist=waist,
-            hips=hips,
             weight=weight,
         )
         response = self.client.get(
@@ -462,5 +460,35 @@ class MeasurementDetailViewTests(TestCase):
         self.assertEqual(response.context["object"].pub_date, pub_date)
         self.assertEqual(response.context["object"].chest, chest)
         self.assertEqual(response.context["object"].waist, round(Decimal(waist), 2))
-        self.assertEqual(response.context["object"].hips, hips)
         self.assertEqual(response.context["object"].weight, round(Decimal(weight), 2))
+        self.assertEqual(response.context["object"].hips, 0)
+
+    def test_measurement_attribute_value_list_contains_not_none_values_only(self):
+        """
+        Measurement attributes value list contains only attributes with not None values.
+        """
+        pub_date = timezone.now() - datetime.timedelta(days=3)
+        chest = 12.0
+        waist = 32.32
+        weight = 32.12
+
+        createMeasurement(
+            user=self.user,
+            pub_date=pub_date,
+            chest=chest,
+            waist=waist,
+            weight=weight,
+        )
+        response = self.client.get(
+            reverse("tracker:measurement-detail", kwargs={"pk": 1})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(
+            response.context["object"].get_value_fields(),
+            [
+                ("chest", "Chest", chest),
+                ("waist", "Waist", round(Decimal(waist), 2)),
+                ("weight", "Weight", round(Decimal(weight), 2)),
+            ],
+        )
