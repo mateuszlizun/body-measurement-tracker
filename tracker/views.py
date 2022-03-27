@@ -27,22 +27,16 @@ class MeasurementListView(LoginRequiredMixin, ListView):
 
         for index, measurement in enumerate(measurements):
             if index != len(measurements) - 1:
-                if measurement.chest and measurements[index + 1].chest:
-                    measurement.chest_difference = (
-                        measurement.chest - measurements[index + 1].chest
-                    )
-                if measurement.waist and measurements[index + 1].waist:
-                    measurement.waist_difference = (
-                        measurement.waist - measurements[index + 1].waist
-                    )
-                if measurement.hips and measurements[index + 1].hips:
-                    measurement.hips_difference = (
-                        measurement.hips - measurements[index + 1].hips
-                    )
-                if measurement.weight and measurements[index + 1].weight:
-                    measurement.weight_difference = (
-                        measurement.weight - measurements[index + 1].weight
-                    )
+                for name, v_name, value in Measurement.get_value_fields(measurement):
+                    current_value = getattr(measurement, name)
+                    previous_value = getattr(measurements[index + 1], name)
+
+                    if current_value and previous_value:
+                        setattr(
+                            measurement,
+                            name + "_difference",
+                            current_value - previous_value,
+                        )
         return measurements
 
 
