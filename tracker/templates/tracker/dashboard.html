@@ -1,5 +1,6 @@
 {% extends "tracker/base.html" %}
 {% load mathfilters %}
+{% load tracker_extras %}
 {% load static %}
 {% block content %}
     <!-- Page Heading -->
@@ -25,7 +26,13 @@
                             <div class="row">
                                 <div class="col">
                                     <p class="card-title text-uppercase text-xs font-weight-bold">chest</p>
-                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">{{ summary_data.chest }} cm</p>
+                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">
+                                        {% if summary_data.chest %}
+                                            {{ summary_data.chest }} cm
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </p>
                                 </div>
                                 <div class="col-auto">
                                     <i class="card-icon fa-solid fa-weight-scale"></i>
@@ -40,7 +47,13 @@
                             <div class="row">
                                 <div class="col">
                                     <p class="card-title text-uppercase text-xs font-weight-bold">waist</p>
-                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">{{ summary_data.waist }} cm</p>
+                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">
+                                        {% if summary_data.waist %}
+                                            {{ summary_data.waist }} cm
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </p>
                                 </div>
                                 <div class="col-auto">
                                     <i class="card-icon fa-solid fa-weight-scale"></i>
@@ -55,7 +68,13 @@
                             <div class="row">
                                 <div class="col">
                                     <p class="card-title text-uppercase text-xs font-weight-bold">hips</p>
-                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">{{ summary_data.hips }} cm</p>
+                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">
+                                        {% if summary_data.hips %}
+                                            {{ summary_data.hips }} cm
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </p>
                                 </div>
                                 <div class="col-auto">
                                     <i class="card-icon fa-solid fa-weight-scale"></i>
@@ -70,7 +89,13 @@
                             <div class="row">
                                 <div class="col">
                                     <p class="card-title text-uppercase text-xs font-weight-bold">weight</p>
-                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">{{ summary_data.weight }} kg</p>
+                                    <p class="card-text h5 mb-0 font-weight-bold text-gray-800">
+                                        {% if summary_data.weight %}
+                                            {{ summary_data.weight }} kg
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </p>
                                 </div>
                                 <div class="col-auto">
                                     <i class="card-icon fa-solid fa-weight-scale"></i>
@@ -102,15 +127,21 @@
                                 {% for measurement in latest_measurements %}
                                     <a href="{% url 'tracker:measurement-detail' measurement.id %}" class="list-group-item list-group-item-action" aria-current="true">
                                         <div>
-                                            {% comment %} <h5 class="mb-1">List group item heading</h5> {% endcomment %}
                                             <small>{{ measurement.pub_date|timesince }} ago</small>
                                         </div>
                                         <div class="mb-1">
-                                            <span class="text-nowrap">Chest: {{ measurement.chest }} cm, </span>
-                                            <span class="text-nowrap">Waist: {{ measurement.waist }} cm, </span>
-                                            <span class="text-nowrap">Hips: {{ measurement.hips }} cm</span>
+                                            {% for name, v_name, value in measurement.get_value_fields|slice:":3" %}
+                                                {% if name != 'weight' %}
+                                                    <span class="text-nowrap">{{ v_name }}: {{ value }} cm, </span>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <span>...</span>
                                         </div>
-                                        <small>Weight: {{ measurement.weight }} kg</small>
+                                        {% if measurement.weight %}
+                                            <small>Weight: {{ measurement.weight }} kg</small>
+                                        {% else %}
+                                            <small>Weight: -</small>
+                                        {% endif %}
                                     </a>
                                 {% endfor %}
                             </div>
@@ -182,46 +213,33 @@
         <script type="text/javascript">
             const measurementsLabels = [
                 {% for data in measurement_list %}
-                    '{{data.pub_date|date:"d.m.y"}}',
+                    '{{ data.pub_date|date:"d.m.y" }}',
                 {% endfor %}
             ];
             const measurementsDatasets = [
-                {
-                    label: 'Chest',
-                    backgroundColor: 'rgb(181, 186, 114)',
-                    borderColor: 'rgb(181, 186, 114)',
-                    data: [
-                        {% for data in measurement_list %}
-                            '{{data.chest}}',
-                        {% endfor %}
-                    ],
-                    tension: 0.4
-                },
-                {
-                    label: 'Waist',
-                    backgroundColor: 'rgb(125, 111, 134)',
-                    borderColor: 'rgb(125, 111, 134)',
-                    data: [
-                        {% for data in measurement_list %}
-                            '{{data.waist}}',
-                        {% endfor %}
-                    ],
-                    tension: 0.4
-                },
-                {
-                    label: 'Hips',
-                    backgroundColor: 'rgb(79, 53, 155)',
-                    borderColor: 'rgb(79, 53, 155)',
-                    data: [
-                        {% for data in measurement_list %}
-                            '{{data.hips}}',
-                        {% endfor %}
-                    ],
-                    tension: 0.4
-                }];
+                {% for data in measurement_list|slice:":1" %}
+                    {% for name, v_name, value in data.get_value_fields %}
+                        {% if name != 'weight' %}
+                            {
+                                label: '{{ v_name }}',
+                                backgroundColor: 'rgb(78, 115, 223)',
+                                borderColor: 'rgb(78, 115, 243)',
+                                data: [
+                                    {% for measurement in measurement_list %}
+                                        '{{ measurement|get_measurement_attr_value:name }}',
+                                    {% endfor %}
+                                ],
+                                tension: 0.4
+                            },
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            ];
             const weightLabels = [
                 {% for data in measurement_list %}
-                    '{{data.pub_date|date:"d.m.y"}}',
+                    {% if data.weight %}
+                        '{{ data.pub_date|date:"d.m.y" }}',
+                    {% endif %}
                 {% endfor %}
             ];
             const weightDatasets = [
@@ -231,7 +249,9 @@
                     borderColor: 'rgb(125, 111, 134)',
                     data: [
                         {% for data in measurement_list %}
-                            '{{data.weight}}',
+                            {% if data.weight %}
+                                '{{ data.weight }}',
+                            {% endif %}
                         {% endfor %}
                     ],
                     tension: 0.4,
