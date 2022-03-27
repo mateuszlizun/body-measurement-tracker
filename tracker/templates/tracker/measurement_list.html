@@ -1,5 +1,6 @@
 {% extends "tracker/base.html" %}
 {% load mathfilters %}
+{% load tracker_extras %}
 {% block content %}
     {% for measurement in measurement_list %}
         <div class="row justify-content-center ms-3 me-3">
@@ -27,70 +28,30 @@
                         </div>
                     </div>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <div>Chest</div>
-                            <div class="d-flex justify-content-between">
-                                <div>{{ measurement.chest }} cm</div>
-                                {% if measurement.chest_difference %}
-                                    <div>
-                                        <span>{{ measurement.chest_difference|abs }}</span>
-                                        {% if measurement.chest_difference > 0 %}
-                                            <i class="bi bi-arrow-up-circle ms-1 text-danger"></i>
-                                        {% else %}
-                                            <i class="bi bi-arrow-down-circle ms-1 text-success"></i>
+                        {% for name, v_name, value in measurement.get_value_fields %}
+                            <li class="list-group-item">
+                                <div>{{ v_name }}</div>
+                                <div class="d-flex justify-content-between">
+                                    {% if name == "weight" %}
+                                        <div>{{ value }} kg</div>
+                                    {% else %}
+                                        <div>{{ value }} cm</div>
+                                    {% endif %}
+                                    {% with attr_diff=measurement|get_measurement_attr_diff:name %}
+                                        {% if attr_diff %}
+                                            <div>
+                                                <span>{{ attr_diff|abs }}</span>
+                                                {% if attr_diff > 0 %}
+                                                    <i class="bi bi-arrow-up-circle ms-1 text-danger"></i>
+                                                {% else %}
+                                                    <i class="bi bi-arrow-down-circle ms-1 text-success"></i>
+                                                {% endif %}
+                                            </div>
                                         {% endif %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div>Waist</div>
-                            <div class="d-flex justify-content-between">
-                                <div>{{ measurement.waist }} cm</div>
-                                {% if measurement.waist_difference %}
-                                    <div>
-                                        <span>{{ measurement.waist_difference|abs }}</span>
-                                        {% if measurement.waist_difference > 0 %}
-                                            <i class="bi bi-arrow-up-circle ms-1 text-danger"></i>
-                                        {% else %}
-                                            <i class="bi bi-arrow-down-circle ms-1 text-success"></i>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div>Hips</div>
-                            <div class="d-flex justify-content-between">
-                                <div>{{ measurement.hips }} cm</div>
-                                {% if measurement.hips_difference %}
-                                    <div>
-                                        <span>{{ measurement.hips_difference|abs }}</span>
-                                        {% if measurement.hips_difference > 0 %}
-                                            <i class="bi bi-arrow-up-circle ms-1 text-danger"></i>
-                                        {% else %}
-                                            <i class="bi bi-arrow-down-circle ms-1 text-success"></i>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </li>
-                        <li class="list-group-item">
-                            <div>Weight</div>
-                            <div class="d-flex justify-content-between">
-                                <div>{{ measurement.weight }} kg</div>
-                                {% if measurement.weight_difference %}
-                                    <div>
-                                        <span>{{ measurement.weight_difference|abs }}</span>
-                                        {% if measurement.weight_difference > 0 %}
-                                            <i class="bi bi-arrow-up-circle ms-1 text-danger"></i>
-                                        {% else %}
-                                            <i class="bi bi-arrow-down-circle ms-1 text-success"></i>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </li>
+                                    {% endwith %}
+                                </div>
+                            </li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>
