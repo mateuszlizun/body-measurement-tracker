@@ -9,8 +9,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse, reverse_lazy
 
 from .models import Measurement, UserMeasurementTypesVisibility
-from .forms import MeasurementCreateUpdateForm
-from .constant import TRACKER_APP_NAME, HISTORY_PATH_NAME, MEASUREMENT_DETAIL_PATH_NAME
+from .forms import MeasurementCreateUpdateForm, UserMeasurementTypesVisibilityUpdateForm
+from .constant import (
+    HOME_PATH_NAME,
+    TRACKER_APP_NAME,
+    HISTORY_PATH_NAME,
+    MEASUREMENT_DETAIL_PATH_NAME,
+)
 
 
 def get_path_name_with_namespace(path_name):
@@ -185,3 +190,23 @@ class MeasurementDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView)
         context["previous_url"] = previous_url
 
         return context
+
+
+class UserMeasurementTypesVisibilityUpdateView(
+    LoginRequiredMixin, UserPassesTestMixin, UpdateView
+):
+    model = UserMeasurementTypesVisibility
+    form_class = UserMeasurementTypesVisibilityUpdateForm
+    template_name = "tracker/user_measurement_types_visibility_update_form.html"
+    success_url = reverse_lazy(get_path_name_with_namespace(HOME_PATH_NAME))
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        userMeasurementTypeVisibility = self.get_object()
+        return self.request.user == userMeasurementTypeVisibility.user
+
+    def get_object(self):
+        return UserMeasurementTypesVisibility.objects.get(user=self.request.user)
