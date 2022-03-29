@@ -82,6 +82,10 @@ class DashboardView(LoginRequiredMixin, ListView):
             context["summary_data"] = None
             context["latest_measurements"] = None
 
+        context[
+            "measurement_types_visibility"
+        ] = UserMeasurementTypesVisibility.objects.get(user=self.request.user)
+
         return context
 
 

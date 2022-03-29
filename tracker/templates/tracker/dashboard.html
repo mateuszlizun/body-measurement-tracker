@@ -131,7 +131,7 @@
                                         </div>
                                         <div class="mb-1">
                                             {% for name, v_name, value in measurement.get_value_fields|slice:":3" %}
-                                                {% if name != 'weight' %}
+                                                {% if name != 'weight' and measurement_types_visibility|get_value:name %}
                                                     <span class="text-nowrap">{{ v_name }}: {{ value }} cm, </span>
                                                 {% endif %}
                                             {% endfor %}
@@ -219,7 +219,7 @@
             const measurementsDatasets = [
                 {% for data in measurement_list|slice:":1" %}
                     {% for name, v_name, value in data.get_value_fields %}
-                        {% if name != 'weight' %}
+                        {% if name != 'weight' and measurement_types_visibility|get_value:name %}
                             {
                                 label: '{{ v_name }}',
                                 backgroundColor: 'rgb(78, 115, 223)',
