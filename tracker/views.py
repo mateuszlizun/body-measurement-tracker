@@ -8,7 +8,7 @@ from django.views.generic import (
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse, reverse_lazy
 
-from .models import Measurement
+from .models import Measurement, UserMeasurementTypesVisibility
 from .forms import MeasurementCreateUpdateForm
 from .constant import TRACKER_APP_NAME, HISTORY_PATH_NAME, MEASUREMENT_DETAIL_PATH_NAME
 
@@ -38,6 +38,15 @@ class MeasurementListView(LoginRequiredMixin, ListView):
                             current_value - previous_value,
                         )
         return measurements
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(MeasurementListView, self).get_context_data(*args, **kwargs)
+
+        context[
+            "measurement_types_visibility"
+        ] = UserMeasurementTypesVisibility.objects.get(user=self.request.user)
+
+        return context
 
 
 class MeasurementChartView(LoginRequiredMixin, ListView):
@@ -73,6 +82,10 @@ class DashboardView(LoginRequiredMixin, ListView):
             context["summary_data"] = None
             context["latest_measurements"] = None
 
+        context[
+            "measurement_types_visibility"
+        ] = UserMeasurementTypesVisibility.objects.get(user=self.request.user)
+
         return context
 
 
@@ -83,6 +96,15 @@ class MeasurementDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
         measurement = self.get_object()
         return self.request.user == measurement.user
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(MeasurementDetailView, self).get_context_data(*args, **kwargs)
+
+        context[
+            "measurement_types_visibility"
+        ] = UserMeasurementTypesVisibility.objects.get(user=self.request.user)
+
+        return context
+
 
 class MeasurementCreateView(LoginRequiredMixin, CreateView):
     model = Measurement
@@ -92,6 +114,16 @@ class MeasurementCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        measurementsTypesVisibility = UserMeasurementTypesVisibility.objects.get(
+            user=self.request.user
+        )
+        kwargs.update({"measurement_types_visibility": measurementsTypesVisibility})
+
+        return kwargs
 
 
 class MeasurementUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -120,6 +152,16 @@ class MeasurementUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
         context["previous_url"] = previous_url
 
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        measurementsTypesVisibility = UserMeasurementTypesVisibility.objects.get(
+            user=self.request.user
+        )
+        kwargs.update({"measurement_types_visibility": measurementsTypesVisibility})
+
+        return kwargs
 
 
 class MeasurementDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
