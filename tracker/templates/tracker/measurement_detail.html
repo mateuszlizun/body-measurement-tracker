@@ -1,5 +1,6 @@
 {% extends "tracker/base.html" %}
 {% load mathfilters %}
+{% load tracker_extras %}
 {% block content %}
     <div class="row justify-content-center ms-3 me-3">
         <div class="card mb-3 p-0 shadow-sm col-sm-12 col-md-8">
@@ -27,6 +28,7 @@
                 </div>
                 <ul class="list-group list-group-flush">
                     {% for name, v_name, value in measurement.get_value_fields %}
+                        {% if measurement_types_visibility|get_value:name %}
                             <li class="list-group-item">
                                 <div>{{ v_name }}</div>
                                 {% if name == "weight" %}
@@ -35,6 +37,7 @@
                                     <div>{{ value }} cm</div>
                                 {% endif %}
                             </li>
+                        {% endif %}
                     {% endfor %}
                 </ul>
             </div>

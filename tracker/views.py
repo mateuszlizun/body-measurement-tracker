@@ -92,6 +92,15 @@ class MeasurementDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
         measurement = self.get_object()
         return self.request.user == measurement.user
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(MeasurementDetailView, self).get_context_data(*args, **kwargs)
+
+        context[
+            "measurement_types_visibility"
+        ] = UserMeasurementTypesVisibility.objects.get(user=self.request.user)
+
+        return context
+
 
 class MeasurementCreateView(LoginRequiredMixin, CreateView):
     model = Measurement

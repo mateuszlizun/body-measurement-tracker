@@ -516,3 +516,29 @@ class MeasurementDetailViewTests(TestCase):
                 ("weight", "Weight", round(Decimal(weight), 2)),
             ],
         )
+
+    def test_some_measurement_types_are_hidden(self):
+        """
+        Measurement values are hidden according to user settings.
+        """
+        createMeasurement(
+            user=self.user,
+            pub_date=timezone.now() - datetime.timedelta(days=3),
+            chest=12.0,
+            waist=32.32,
+        )
+
+        typesVisibility = UserMeasurementTypesVisibility.objects.get(user=self.user)
+        typesVisibility.chest = False
+        typesVisibility.save()
+
+        response = self.client.get(
+            reverse("tracker:measurement-detail", kwargs={"pk": 1})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(hasattr(response.context["object"], "chest"))
+        self.assertTrue(hasattr(response.context["object"], "waist"))
+
+        self.assertNotContains(response, "Chest")
+        self.assertContains(response, "Waist")
