@@ -6,6 +6,18 @@ from .models import Measurement
 
 
 class MeasurementCreateUpdateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        self.measurementTypesVisibility = kwargs.pop(
+            "measurement_types_visibility", None
+        )
+        super().__init__(*args, **kwargs)
+
+        fields = self.fields.copy()
+
+        for field in fields:
+            if not getattr(self.measurementTypesVisibility, field, False):
+                self.fields.pop(field)
+
     class Meta:
         model = Measurement
         fields = [

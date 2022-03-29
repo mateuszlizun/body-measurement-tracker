@@ -115,6 +115,16 @@ class MeasurementCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        measurementsTypesVisibility = UserMeasurementTypesVisibility.objects.get(
+            user=self.request.user
+        )
+        kwargs.update({"measurement_types_visibility": measurementsTypesVisibility})
+
+        return kwargs
+
 
 class MeasurementUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Measurement
@@ -142,6 +152,16 @@ class MeasurementUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
         context["previous_url"] = previous_url
 
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        measurementsTypesVisibility = UserMeasurementTypesVisibility.objects.get(
+            user=self.request.user
+        )
+        kwargs.update({"measurement_types_visibility": measurementsTypesVisibility})
+
+        return kwargs
 
 
 class MeasurementDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
