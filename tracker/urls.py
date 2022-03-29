@@ -9,6 +9,7 @@ from .constant import (
     MEASUREMENT_CREATE_PATH_NAME,
     MEASUREMENT_UPDATE_PATH_NAME,
     MEASUREMENT_DELETE_PATH_NAME,
+    USER_MEASUREMENT_TYPES_PATH_NAME,
 )
 
 app_name = TRACKER_APP_NAME
@@ -36,5 +37,10 @@ urlpatterns = [
         "measurement/<int:pk>/delete/",
         views.MeasurementDeleteView.as_view(),
         name=MEASUREMENT_DELETE_PATH_NAME,
+    ),
+    path(
+        "visibility-settings/",
+        views.UserMeasurementTypesVisibilityUpdateView.as_view(),
+        name=USER_MEASUREMENT_TYPES_PATH_NAME,
     ),
 ]

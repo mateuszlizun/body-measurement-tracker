@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from .models import Measurement
+from .models import Measurement, UserMeasurementTypesVisibility
 
 
 class MeasurementCreateUpdateForm(forms.ModelForm):
@@ -56,3 +56,28 @@ class MeasurementCreateUpdateForm(forms.ModelForm):
             raise ValidationError("Date cannnot be from the future!")
 
         return pub_date
+
+
+class UserMeasurementTypesVisibilityUpdateForm(forms.ModelForm):
+    class Meta:
+        model = UserMeasurementTypesVisibility
+        fields = [
+            "neck",
+            "shoulders",
+            "chest",
+            "bust",
+            "under_bust",
+            "bicep_r",
+            "bicep_l",
+            "forearm_r",
+            "forearm_l",
+            "waist",
+            "abdomen",
+            "hips",
+            "buttocks",
+            "thigh_r",
+            "thigh_l",
+            "calf_r",
+            "calf_l",
+            "weight",
+        ]
