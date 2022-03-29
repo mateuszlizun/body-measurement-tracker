@@ -9,5 +9,5 @@ def get_measurement_attr_diff(obj, attr):
 
 
 @register.filter
-def get_measurement_attr_value(obj, attr):
+def get_value(obj, attr):
     return getattr(obj, attr, None)

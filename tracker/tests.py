@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.urls import reverse
 
 
-from .models import Measurement
+from .models import Measurement, UserMeasurementTypesVisibility
 
 
 def createMeasurement(
@@ -253,6 +253,30 @@ class MeasurementListViewTests(TestCase):
         self.assertQuerysetEqual(
             list(response.context["measurement_list"]), [measurement1, measurement2]
         )
+
+    def test_some_measurement_types_are_hidden(self):
+        """
+        Measurement values are hidden according to user settings.
+        """
+        createMeasurement(
+            user=self.user,
+            pub_date=timezone.now() - datetime.timedelta(days=3),
+            chest=12.0,
+            waist=32.32,
+        )
+
+        typesVisibility = UserMeasurementTypesVisibility.objects.get(user=self.user)
+        typesVisibility.chest = False
+        typesVisibility.save()
+
+        response = self.client.get(reverse("tracker:history"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(hasattr(response.context["measurement_list"][0], "chest"))
+        self.assertTrue(hasattr(response.context["measurement_list"][0], "waist"))
+
+        self.assertNotContains(response, "Chest")
+        self.assertContains(response, "Waist")
 
 
 class MeasurementChartViewTests(TestCase):

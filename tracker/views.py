@@ -8,7 +8,7 @@ from django.views.generic import (
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse, reverse_lazy
 
-from .models import Measurement
+from .models import Measurement, UserMeasurementTypesVisibility
 from .forms import MeasurementCreateUpdateForm
 from .constant import TRACKER_APP_NAME, HISTORY_PATH_NAME, MEASUREMENT_DETAIL_PATH_NAME
 
@@ -38,6 +38,15 @@ class MeasurementListView(LoginRequiredMixin, ListView):
                             current_value - previous_value,
                         )
         return measurements
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(MeasurementListView, self).get_context_data(*args, **kwargs)
+
+        context[
+            "measurement_types_visibility"
+        ] = UserMeasurementTypesVisibility.objects.get(user=self.request.user)
+
+        return context
 
 
 class MeasurementChartView(LoginRequiredMixin, ListView):

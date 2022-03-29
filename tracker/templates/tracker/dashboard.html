@@ -226,7 +226,7 @@
                                 borderColor: 'rgb(78, 115, 243)',
                                 data: [
                                     {% for measurement in measurement_list %}
-                                        '{{ measurement|get_measurement_attr_value:name }}',
+                                        '{{ measurement|get_value:name }}',
                                     {% endfor %}
                                 ],
                                 tension: 0.4
