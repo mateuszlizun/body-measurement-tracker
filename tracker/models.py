@@ -82,3 +82,61 @@ class Measurement(models.Model):
             for field in filter(self.is_measurement_value, Measurement._meta.fields)
             if getattr(self, field.name)
         ]
+
+
+class UserMeasurementTypesVisibility(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    neck = models.BooleanField(
+        verbose_name="Neck", default=False, blank=False, null=False
+    )
+    shoulders = models.BooleanField(
+        verbose_name="Shoulders", default=False, blank=False, null=False
+    )
+    chest = models.BooleanField(
+        verbose_name="Chest", default=True, blank=False, null=False
+    )
+    bust = models.BooleanField(
+        verbose_name="Bust", default=False, blank=False, null=False
+    )
+    under_bust = models.BooleanField(
+        verbose_name="Under bust", default=False, blank=False, null=False
+    )
+    bicep_r = models.BooleanField(
+        verbose_name="Bicep (R)", default=False, blank=False, null=False
+    )
+    bicep_l = models.BooleanField(
+        verbose_name="Bicep (L)", default=False, blank=False, null=False
+    )
+    forearm_r = models.BooleanField(
+        verbose_name="Forearm (R)", default=False, blank=False, null=False
+    )
+    forearm_l = models.BooleanField(
+        verbose_name="Forearm (L)", default=False, blank=False, null=False
+    )
+    waist = models.BooleanField(
+        verbose_name="Waist", default=True, blank=False, null=False
+    )
+    abdomen = models.BooleanField(
+        verbose_name="Abdomen", default=False, blank=False, null=False
+    )
+    hips = models.BooleanField(
+        verbose_name="Hips", default=True, blank=False, null=False
+    )
+    buttocks = models.BooleanField(
+        verbose_name="Buttocks", default=False, blank=False, null=False
+    )
+    thigh_r = models.BooleanField(
+        verbose_name="Thigh (R)", default=False, blank=False, null=False
+    )
+    thigh_l = models.BooleanField(
+        verbose_name="Thigh (L)", default=False, blank=False, null=False
+    )
+    calf_r = models.BooleanField(
+        verbose_name="Calf (R)", default=False, blank=False, null=False
+    )
+    calf_l = models.BooleanField(
+        verbose_name="Calf (L)", default=False, blank=False, null=False
+    )
+    weight = models.BooleanField(
+        verbose_name="Weight", default=True, blank=False, null=False
+    )
