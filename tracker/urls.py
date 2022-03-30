@@ -16,7 +16,6 @@ app_name = TRACKER_APP_NAME
 
 urlpatterns = [
     path("", views.DashboardView.as_view(), name=HOME_PATH_NAME),
-    path("charts/", views.MeasurementChartView.as_view(), name="charts"),
     path("history/", views.MeasurementListView.as_view(), name=HISTORY_PATH_NAME),
     path(
         "measurement/<int:pk>/",
