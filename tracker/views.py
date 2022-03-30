@@ -8,8 +8,12 @@ from django.views.generic import (
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse, reverse_lazy
 
-from .models import Measurement, UserMeasurementTypesVisibility
-from .forms import MeasurementCreateUpdateForm, UserMeasurementTypesVisibilityUpdateForm
+from .models import Measurement, UserGoals, UserMeasurementTypesVisibility
+from .forms import (
+    MeasurementCreateUpdateForm,
+    UserGoalsForm,
+    UserMeasurementTypesVisibilityUpdateForm,
+)
 from .constant import (
     HOME_PATH_NAME,
     TRACKER_APP_NAME,
@@ -200,3 +204,21 @@ class UserMeasurementTypesVisibilityUpdateView(
 
     def get_object(self):
         return UserMeasurementTypesVisibility.objects.get(user=self.request.user)
+
+
+class UserGoalsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = UserGoals
+    form_class = UserGoalsForm
+    template_name = "tracker/user_goals_update_form.html"
+    success_url = reverse_lazy(get_path_name_with_namespace(HOME_PATH_NAME))
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        userGoals = self.get_object()
+        return self.request.user == userGoals.user
+
+    def get_object(self):
+        return UserGoals.objects.get(user=self.request.user)
