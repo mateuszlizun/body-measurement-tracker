@@ -140,3 +140,79 @@ class UserMeasurementTypesVisibility(models.Model):
     weight = models.BooleanField(
         verbose_name="Weight", default=True, blank=False, null=False
     )
+
+
+class UserGoals(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    neck = models.DecimalField(
+        verbose_name="Neck", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    shoulders = models.DecimalField(
+        verbose_name="Shoulders", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    chest = models.DecimalField(
+        verbose_name="Chest", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    bust = models.DecimalField(
+        verbose_name="Bust", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    under_bust = models.DecimalField(
+        verbose_name="Under bust", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    bicep_r = models.DecimalField(
+        verbose_name="Bicep (R)", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    bicep_l = models.DecimalField(
+        verbose_name="Bicep (L)", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    forearm_r = models.DecimalField(
+        verbose_name="Forearm (R)",
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+    forearm_l = models.DecimalField(
+        verbose_name="Forearm (L)",
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+    waist = models.DecimalField(
+        verbose_name="Waist", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    abdomen = models.DecimalField(
+        verbose_name="Abdomen", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    hips = models.DecimalField(
+        verbose_name="Hips", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    buttocks = models.DecimalField(
+        verbose_name="Buttocks", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    thigh_r = models.DecimalField(
+        verbose_name="Thigh (R)", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    thigh_l = models.DecimalField(
+        verbose_name="Thigh (L)", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    calf_r = models.DecimalField(
+        verbose_name="Calf (R)", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    calf_l = models.DecimalField(
+        verbose_name="Calf (L)", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+    weight = models.DecimalField(
+        verbose_name="Weight", max_digits=5, decimal_places=2, null=True, blank=True
+    )
+
+    def is_measurement_value(self, field):
+        return field.name not in ("id", "user")
+
+    def get_value_fields(self):
+        return [
+            (field.name, field.verbose_name, getattr(self, field.name))
+            for field in filter(self.is_measurement_value, UserGoals._meta.fields)
+            if getattr(self, field.name)
+        ]
