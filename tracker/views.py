@@ -54,16 +54,6 @@ class MeasurementListView(LoginRequiredMixin, ListView):
         return context
 
 
-class MeasurementChartView(LoginRequiredMixin, ListView):
-    model = Measurement
-    template_name = "tracker/charts.html"
-
-    def get_queryset(self):
-        return Measurement.objects.filter(user=self.request.user,).order_by(
-            "-pub_date"
-        )[:10]
-
-
 class DashboardView(LoginRequiredMixin, ListView):
     model = Measurement
     template_name = "tracker/dashboard.html"

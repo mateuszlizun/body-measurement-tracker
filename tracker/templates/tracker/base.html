@@ -45,11 +45,6 @@
             <div class="w-100 d-md-flex flex-row justify-content-end">
                 <div class="navbar-nav">
                     <div class="nav-item text-nowrap">
-                        <a class="nav-link px-3" href="{% url 'tracker:user-measurement-types' %}">Settings</a>
-                    </div>
-                </div>
-                <div class="navbar-nav">
-                    <div class="nav-item text-nowrap">
                         <a class="nav-link px-3" href="{% url 'profile' %}">Profile</a>
                     </div>
                 </div>
@@ -72,22 +67,22 @@
                                     <span>Home</span>
                                 </a>
                             </li>
-                        </ul>
-
-                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                            <span>Measurements</span>
-                        </h6>
-                        <ul class="nav flex-column mb-2">
-                            <li class="nav-item">
-                                <a class="nav-link {% if request.resolver_match.url_name == "charts" %} active{% endif %}" href="{% url 'tracker:charts' %}">
-                                    <i class="fa-solid fa-chart-area"></i>
-                                    <span>Charts</span>
-                                </a>
-                            </li>
                             <li class="nav-item">
                                 <a class="nav-link {% if request.resolver_match.url_name == "history" %} active{% endif %}" href="{% url 'tracker:history' %}">
                                     <i class="fa-solid fa-table"></i>
                                     <span>History</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                            <span>Settings</span>
+                        </h6>
+                        <ul class="nav flex-column mb-2">
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == "user-measurement-types" %} active{% endif %}" href="{% url 'tracker:user-measurement-types' %}">
+                                    <i class="fa-solid fa-chart-area"></i>
+                                    <span>Measurement types</span>
                                 </a>
                             </li>
                         </ul>
