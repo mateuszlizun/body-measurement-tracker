@@ -10,6 +10,7 @@ from .constant import (
     MEASUREMENT_UPDATE_PATH_NAME,
     MEASUREMENT_DELETE_PATH_NAME,
     USER_MEASUREMENT_TYPES_PATH_NAME,
+    USER_GOALS_PATH_NAME,
 )
 
 app_name = TRACKER_APP_NAME
@@ -41,5 +42,10 @@ urlpatterns = [
         "visibility-settings/",
         views.UserMeasurementTypesVisibilityUpdateView.as_view(),
         name=USER_MEASUREMENT_TYPES_PATH_NAME,
+    ),
+    path(
+        "goals-settings/",
+        views.UserGoalsUpdateView.as_view(),
+        name=USER_GOALS_PATH_NAME,
     ),
 ]

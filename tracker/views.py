@@ -8,8 +8,12 @@ from django.views.generic import (
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse, reverse_lazy
 
-from .models import Measurement, UserMeasurementTypesVisibility
-from .forms import MeasurementCreateUpdateForm, UserMeasurementTypesVisibilityUpdateForm
+from .models import Measurement, UserGoals, UserMeasurementTypesVisibility
+from .forms import (
+    MeasurementCreateUpdateForm,
+    UserGoalsForm,
+    UserMeasurementTypesVisibilityUpdateForm,
+)
 from .constant import (
     HOME_PATH_NAME,
     TRACKER_APP_NAME,
@@ -70,12 +74,40 @@ class DashboardView(LoginRequiredMixin, ListView):
             context["summary_data"] = Measurement.objects.filter(
                 user=self.request.user
             ).latest("pub_date")
-            context["latest_measurements"] = Measurement.objects.filter(
+
+            latestMeasurements = Measurement.objects.filter(
                 user=self.request.user
             ).order_by("-pub_date")[:5]
+
+            userGoals = UserGoals.objects.get(user=self.request.user)
+
+            if len(latestMeasurements) and userGoals:
+                goals = []
+
+                for name, v_name, value in UserGoals.get_value_fields(userGoals):
+                    measurementValue = getattr(latestMeasurements[0], name)
+                    if measurementValue:
+                        if value >= measurementValue:
+                            goals.append((name, v_name, 100))
+                        else:
+                            goals.append(
+                                (
+                                    name,
+                                    v_name,
+                                    round(
+                                        ((measurementValue - value) / measurementValue)
+                                        * 100
+                                    ),
+                                )
+                            )
+
+            context["latest_measurements"] = latestMeasurements
+            context["user_goals"] = goals
+
         except Measurement.DoesNotExist:
             context["summary_data"] = None
             context["latest_measurements"] = None
+            context["user_goals"] = None
 
         context[
             "measurement_types_visibility"
@@ -200,3 +232,21 @@ class UserMeasurementTypesVisibilityUpdateView(
 
     def get_object(self):
         return UserMeasurementTypesVisibility.objects.get(user=self.request.user)
+
+
+class UserGoalsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = UserGoals
+    form_class = UserGoalsForm
+    template_name = "tracker/user_goals_update_form.html"
+    success_url = reverse_lazy(get_path_name_with_namespace(HOME_PATH_NAME))
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        userGoals = self.get_object()
+        return self.request.user == userGoals.user
+
+    def get_object(self):
+        return UserGoals.objects.get(user=self.request.user)
